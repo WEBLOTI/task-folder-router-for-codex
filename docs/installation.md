@@ -7,6 +7,8 @@ By default, the installer uses mixed mode:
 - tasks without labels work normally in the workspace root;
 - tasks with configured labels are routed into subfolders.
 
+If you want Codex to guide the install, use [Copy-Paste Prompt For Codex](copy-paste-prompt.md). Paste that prompt into Planning Mode from the workspace where you want routed folders.
+
 ## 1. Create Or Choose A Codex Workspace
 
 Pick the folder where you want Codex to work. It can be a new empty folder or an existing project.
