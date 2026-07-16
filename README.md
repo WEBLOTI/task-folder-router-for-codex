@@ -25,6 +25,8 @@ Codex workspaces can get messy when many unrelated tasks write files into the sa
 Useful examples:
 
 - `project: crm` -> `projects/crm/`
+- `project-task: crm` -> `projects/crm/`
+- `project-continue: crm` -> `projects/crm/`
 - `plugin: checkout tools` -> `plugins/checkout-tools/`
 - `client: Acme Inc.` -> `clients/acme-inc/`
 - `site: landing page` -> `sites/landing-page/`
@@ -72,6 +74,19 @@ This creates or reuses:
 projects/my-dashboard/
 ```
 
+`project-task:` and `project-continue:` are aliases for `project:`. They express intent but reuse the same folder:
+
+```text
+project-task: my-dashboard
+project-continue: my-dashboard
+```
+
+Both route to:
+
+```text
+projects/my-dashboard/
+```
+
 ## Quick Start
 
 Clone this template once into a tools folder:
@@ -92,7 +107,7 @@ You can also ask Codex to run that installer for you once the repository is clon
 The installer asks which labels you want to allow, for example:
 
 ```text
-project=projects, plugin=plugins, client=clients
+project=projects, project-task=projects, project-continue=projects, plugin=plugins, client=clients
 ```
 
 Then open that workspace in Codex, trust the hooks if Codex asks, and start a new task:
@@ -109,10 +124,10 @@ Codex will work inside:
 projects/my-dashboard/
 ```
 
-To continue the same subproject from a different new Codex task, start with the same label and name:
+To continue the same subproject from a different new Codex task, use `project-continue:` with the same name:
 
 ```text
-project: my-dashboard
+project-continue: my-dashboard
 
 Continue the settings screen.
 ```
