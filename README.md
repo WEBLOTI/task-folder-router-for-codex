@@ -104,6 +104,13 @@ python3 scripts/install.py --target "/path/to/my-codex-workspace"
 
 You can also ask Codex to run that installer for you once the repository is cloned.
 
+Important: open the target workspace in Codex after installation. If you cloned this template inside a project but did not install it into the project root, Codex will only see the router inside the cloned template folder. The workspace root must contain:
+
+```text
+.codex/hooks.json
+.codex/task-folder-router.json
+```
+
 The installer asks which labels you want to allow, for example:
 
 ```text
