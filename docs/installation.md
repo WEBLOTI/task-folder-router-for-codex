@@ -38,14 +38,14 @@ The installer asks which labels you want to allow:
 
 ```text
 Which labels do you want to allow?
-Default: project=projects, plugin=plugins, client=clients, site=sites, app=apps
+Default: project=projects, project-task=projects, project-continue=projects, plugin=plugins, client=clients, site=sites, app=apps
 Routes:
 ```
 
 Press Enter to accept the default or enter your own:
 
 ```text
-project=projects, client=clients, app=apps
+project=projects, project-task=projects, project-continue=projects, client=clients, app=apps
 ```
 
 The installer also asks whether every new task should require a label. Choose `no` for the recommended mixed mode.
@@ -94,10 +94,10 @@ In mixed mode, this does not create a routed subfolder.
 
 ## 6. Continue The Same Subproject From A New Task
 
-Open a new Codex task and reuse the same label and name:
+Open a new Codex task and use the continuation alias with the same name:
 
 ```text
-project: my-dashboard
+project-continue: my-dashboard
 
 Continue the dashboard navigation.
 ```
@@ -109,6 +109,14 @@ projects/my-dashboard/
 ```
 
 Renaming the visible Codex task does not rename this folder.
+
+`project-task:` is also available when you want to open a new task that belongs to the same project folder:
+
+```text
+project-task: my-dashboard
+
+Add the user menu.
+```
 
 ## 7. Reuse In Other Workspaces
 
