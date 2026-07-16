@@ -19,17 +19,28 @@ mkdir -p ~/CodexWorkspaces/my-workspace
 
 ## 2. Clone This Template Once
 
-Clone this repository into a tools folder. You do not need to clone it again for every workspace.
+Recommended: clone this repository into a tools folder outside your Codex workspaces. You do not need to clone it again for every workspace.
 
 ```bash
-git clone https://github.com/<owner>/task-folder-router-for-codex.git
+mkdir -p ~/CodexTools
+cd ~/CodexTools
+git clone https://github.com/WEBLOTI/task-folder-router-for-codex.git
+cd task-folder-router-for-codex
+```
+
+If you use GitHub CLI:
+
+```bash
+mkdir -p ~/CodexTools
+cd ~/CodexTools
+gh repo clone WEBLOTI/task-folder-router-for-codex
 cd task-folder-router-for-codex
 ```
 
 Recommended shape:
 
 ```text
-tools/
+CodexTools/
   task-folder-router-for-codex/
 
 CodexWorkspaces/
@@ -38,12 +49,28 @@ CodexWorkspaces/
 
 The cloned template is the installer source. Your Codex workspace is the target where your tasks will run.
 
+Alternative shape when you want the router clone inside a workspace:
+
+```text
+my-workspace/
+  _tools/
+    task-folder-router-for-codex/
+```
+
+That is supported, but you still must install into `my-workspace/`, not into `_tools/task-folder-router-for-codex/`.
+
 ## 3. Run The Installer
 
 Point the installer to the Codex workspace where you want the router.
 
 ```bash
 python3 scripts/install.py --target "~/CodexWorkspaces/my-workspace"
+```
+
+If the router clone is inside the workspace under `_tools/task-folder-router-for-codex`, run:
+
+```bash
+python3 scripts/install.py --target "../.."
 ```
 
 The installer asks which labels you want to allow:
@@ -86,6 +113,12 @@ After installation, the target workspace should contain:
 ```
 
 If those files only exist inside `task-folder-router-for-codex/.codex/`, the router was cloned but not installed into the workspace root.
+
+To verify before opening Codex:
+
+```bash
+python3 scripts/doctor.py --target "~/CodexWorkspaces/my-workspace"
+```
 
 If Codex asks whether to trust hooks, review and trust them only if you are comfortable with the local hook behavior.
 
