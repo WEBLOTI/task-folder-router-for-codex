@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .codex/hooks/task_folder_router.py",
+            "timeout": 30,
+            "statusMessage": "Preparing task folder router"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .codex/hooks/task_folder_router.py",
+            "timeout": 30,
+            "statusMessage": "Checking task folder route"
+          }
+        ]
+      }
+    ]
+  }
+}

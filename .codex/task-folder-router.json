@@ -1,0 +1,10 @@
+{
+  "routes": {
+    "project": "projects",
+    "plugin": "plugins",
+    "client": "clients",
+    "site": "sites",
+    "app": "apps"
+  },
+  "require_route_prefix": true
+}

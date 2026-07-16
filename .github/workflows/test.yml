@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate JSON
+        run: |
+          python -m json.tool .codex/task-folder-router.json >/dev/null
+          python -m json.tool .codex/hooks.json >/dev/null
+
+      - name: Validate Python
+        run: |
+          python -m py_compile .codex/hooks/task_folder_router.py scripts/install.py tests/test_router.py
+
+      - name: Run tests
+        run: |
+          python -m unittest tests/test_router.py
