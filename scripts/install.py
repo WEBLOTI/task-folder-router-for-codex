@@ -6,7 +6,10 @@ import sys
 from pathlib import Path
 
 
-DEFAULT_ROUTE_TEXT = "project=projects, plugin=plugins, client=clients, site=sites, app=apps"
+DEFAULT_ROUTE_TEXT = (
+    "project=projects, project-task=projects, project-continue=projects, "
+    "plugin=plugins, client=clients, site=sites, app=apps"
+)
 DEFAULT_REQUIRE_ROUTE_PREFIX = False
 
 
