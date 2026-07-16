@@ -1,6 +1,8 @@
 {
   "routes": {
     "project": "projects",
+    "project-task": "projects",
+    "project-continue": "projects",
     "plugin": "plugins",
     "client": "clients",
     "site": "sites",
