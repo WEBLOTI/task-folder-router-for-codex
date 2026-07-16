@@ -76,6 +76,12 @@ python3 scripts/install.py --target "/path/to/codex-workspace"
 
 Then open that target workspace in Codex.
 
+You can also run:
+
+```bash
+python3 scripts/doctor.py --target "/path/to/codex-workspace"
+```
+
 ## My Folder Was Created Above The Label Folder
 
 This usually means the router was installed inside the cloned template folder instead of the real Codex workspace root.
@@ -115,6 +121,12 @@ will route to:
 
 ```text
 clients/jobs-app/
+```
+
+Use the doctor command to confirm:
+
+```bash
+python3 /path/to/task-folder-router-for-codex/scripts/doctor.py --target "/path/to/my-workspace"
 ```
 
 ## I Want To Use It In Multiple Workspaces
