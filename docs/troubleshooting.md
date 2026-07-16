@@ -99,10 +99,10 @@ That should not happen if session state is preserved. Check whether `.codex/stat
 
 ## I Want To Continue The Same Subproject In A New Task
 
-Use the same label and name:
+Use the continuation alias with the same name:
 
 ```text
-project: crm
+project-continue: crm
 
 Continue the reports screen.
 ```
@@ -114,3 +114,15 @@ projects/crm/
 ```
 
 The visible Codex task name does not control the folder name.
+
+## Will `project-task:` Or `project-continue:` Create Another Project?
+
+No, not with the default configuration. These labels are aliases that point to the same folder root as `project:`.
+
+```text
+project: crm          -> projects/crm/
+project-task: crm     -> projects/crm/
+project-continue: crm -> projects/crm/
+```
+
+They only create a different folder if you edit `.codex/task-folder-router.json` and point them to another root.
