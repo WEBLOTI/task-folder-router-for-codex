@@ -4,6 +4,8 @@ Task Folder Router for Codex is a small public template for organizing Codex wor
 
 It lets you define labels such as `project:`, `plugin:`, `client:`, `site:`, or `app:`. When a new Codex task starts with one of those labels, the hook creates or reuses the matching folder and tells Codex to work there.
 
+By default, the router uses mixed mode: unlabeled tasks work normally in the workspace root, and labeled tasks are routed into subfolders.
+
 ```text
 client: acme inc
 
@@ -46,6 +48,30 @@ Useful examples:
 - It does not accept arbitrary labels or user-provided paths.
 - It does not rename folders when you rename a Codex task.
 
+## Two Ways To Work
+
+Use Codex normally without a label:
+
+```text
+Create a quick notes file for this workspace.
+```
+
+This stays in the workspace root.
+
+Use a configured label when you want an independent task folder:
+
+```text
+project: my-dashboard
+
+Build the first screen.
+```
+
+This creates or reuses:
+
+```text
+projects/my-dashboard/
+```
+
 ## Quick Start
 
 Clone this template once into a tools folder:
@@ -60,6 +86,8 @@ Install it into any Codex workspace:
 ```bash
 python3 scripts/install.py --target "/path/to/my-codex-workspace"
 ```
+
+You can also ask Codex to run that installer for you once the repository is cloned.
 
 The installer asks which labels you want to allow, for example:
 
@@ -80,6 +108,16 @@ Codex will work inside:
 ```text
 projects/my-dashboard/
 ```
+
+To continue the same subproject from a different new Codex task, start with the same label and name:
+
+```text
+project: my-dashboard
+
+Continue the settings screen.
+```
+
+The router reuses the same folder instead of creating a duplicate.
 
 ## Install Once, Reuse Many Times
 
