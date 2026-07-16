@@ -25,19 +25,22 @@ def run_json(script, payload, cwd=None):
 
 
 class TaskFolderRouterTests(unittest.TestCase):
-    def install_workspace(self):
+    def install_workspace(self, require_label=False):
         tmp = tempfile.TemporaryDirectory()
         workspace = Path(tmp.name)
+        command = [
+            "python3",
+            str(INSTALLER),
+            "--target",
+            str(workspace),
+            "--routes",
+            "project=projects,client=clients",
+            "--yes",
+        ]
+        if require_label:
+            command.append("--require-label")
         subprocess.run(
-            [
-                "python3",
-                str(INSTALLER),
-                "--target",
-                str(workspace),
-                "--routes",
-                "project=projects,client=clients",
-                "--yes",
-            ],
+            command,
             check=True,
             capture_output=True,
             text=True,
@@ -75,11 +78,20 @@ class TaskFolderRouterTests(unittest.TestCase):
             self.assertIn("hookSpecificOutput", result)
             self.assertTrue((workspace / "clients" / "acme-inc").is_dir())
 
-    def test_missing_label_blocks(self):
+    def test_missing_label_uses_workspace_root_by_default(self):
         tmp, workspace, hook = self.install_workspace()
         with tmp:
             self.start_session(hook, workspace, "s2")
             result = self.submit_prompt(hook, workspace, "s2", "Build portal")
+            self.assertIn("hookSpecificOutput", result)
+            self.assertIn("workspace root", result["hookSpecificOutput"]["additionalContext"])
+            self.assertFalse((workspace / "projects" / "build-portal").exists())
+
+    def test_missing_label_blocks_in_strict_mode(self):
+        tmp, workspace, hook = self.install_workspace(require_label=True)
+        with tmp:
+            self.start_session(hook, workspace, "s2-strict")
+            result = self.submit_prompt(hook, workspace, "s2-strict", "Build portal")
             self.assertEqual(result["decision"], "block")
             self.assertIn("configured task-folder label", result["reason"])
 
@@ -109,6 +121,24 @@ class TaskFolderRouterTests(unittest.TestCase):
             self.assertIsNone(result)
             self.assertTrue((workspace / "projects" / "first").is_dir())
             self.assertFalse((workspace / "projects" / "second").exists())
+
+    def test_new_session_with_same_label_reuses_folder(self):
+        tmp, workspace, hook = self.install_workspace()
+        with tmp:
+            self.start_session(hook, workspace, "s6-a")
+            self.submit_prompt(hook, workspace, "s6-a", "project: shared")
+            first = workspace / "projects" / "shared"
+            self.assertTrue(first.is_dir())
+
+            self.start_session(hook, workspace, "s6-b")
+            self.submit_prompt(hook, workspace, "s6-b", "project: shared")
+            self.assertTrue(first.is_dir())
+            task_dirs = [
+                path.name
+                for path in (workspace / "projects").iterdir()
+                if path.is_dir()
+            ]
+            self.assertEqual(task_dirs, ["shared"])
 
 
 if __name__ == "__main__":
