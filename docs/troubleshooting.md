@@ -14,6 +14,24 @@ Check allowed labels in:
 .codex/task-folder-router.json
 ```
 
+This usually means strict mode is enabled:
+
+```json
+"require_route_prefix": true
+```
+
+Set it to `false` if you want mixed mode, where unlabeled tasks work normally in the workspace root.
+
+## I Started Without A Label And No Folder Was Created
+
+That is expected in mixed mode. Without a label, the router lets the task work normally in the workspace root.
+
+Start with a configured label if you want a subfolder:
+
+```text
+project: my-app
+```
+
 ## My Label Is Rejected
 
 The label is probably not configured.
@@ -25,6 +43,8 @@ client: acme
 ```
 
 Add `client` to `.codex/task-folder-router.json` or use an existing label.
+
+If you did not mean to route the task, remove the first-line label and write the request normally.
 
 ## The Folder Was Not Created
 
@@ -76,3 +96,21 @@ python3 -m unittest tests/test_router.py
 ## Continue Task Created Another Folder
 
 That should not happen if session state is preserved. Check whether `.codex/state/task-folder-router/` exists and whether Codex started a truly new task instead of continuing an existing one.
+
+## I Want To Continue The Same Subproject In A New Task
+
+Use the same label and name:
+
+```text
+project: crm
+
+Continue the reports screen.
+```
+
+This reuses:
+
+```text
+projects/crm/
+```
+
+The visible Codex task name does not control the folder name.
