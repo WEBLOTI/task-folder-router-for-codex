@@ -34,7 +34,7 @@ class TaskFolderRouterTests(unittest.TestCase):
             "--target",
             str(workspace),
             "--routes",
-            "project=projects,client=clients",
+            "project=projects,project-task=projects,project-continue=projects,client=clients",
             "--yes",
         ]
         if require_label:
@@ -139,6 +139,29 @@ class TaskFolderRouterTests(unittest.TestCase):
                 if path.is_dir()
             ]
             self.assertEqual(task_dirs, ["shared"])
+
+    def test_project_aliases_reuse_same_folder(self):
+        tmp, workspace, hook = self.install_workspace()
+        with tmp:
+            self.start_session(hook, workspace, "s7-a")
+            self.submit_prompt(hook, workspace, "s7-a", "project: crm")
+            target = workspace / "projects" / "crm"
+            self.assertTrue(target.is_dir())
+
+            self.start_session(hook, workspace, "s7-b")
+            self.submit_prompt(hook, workspace, "s7-b", "project-task: crm")
+            self.assertTrue(target.is_dir())
+
+            self.start_session(hook, workspace, "s7-c")
+            self.submit_prompt(hook, workspace, "s7-c", "project-continue: crm")
+            self.assertTrue(target.is_dir())
+
+            task_dirs = [
+                path.name
+                for path in (workspace / "projects").iterdir()
+                if path.is_dir()
+            ]
+            self.assertEqual(task_dirs, ["crm"])
 
 
 if __name__ == "__main__":
