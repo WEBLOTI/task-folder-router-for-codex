@@ -26,6 +26,18 @@ git clone https://github.com/<owner>/task-folder-router-for-codex.git
 cd task-folder-router-for-codex
 ```
 
+Recommended shape:
+
+```text
+tools/
+  task-folder-router-for-codex/
+
+CodexWorkspaces/
+  my-workspace/
+```
+
+The cloned template is the installer source. Your Codex workspace is the target where your tasks will run.
+
 ## 3. Run The Installer
 
 Point the installer to the Codex workspace where you want the router.
@@ -64,7 +76,16 @@ python3 scripts/install.py --target "~/CodexWorkspaces/my-workspace" --require-l
 
 ## 4. Open The Workspace In Codex
 
-Open the target workspace in Codex, not necessarily this template repository.
+Open the target workspace in Codex, not the cloned template repository unless you intentionally installed the router into that same folder.
+
+After installation, the target workspace should contain:
+
+```text
+.codex/hooks.json
+.codex/task-folder-router.json
+```
+
+If those files only exist inside `task-folder-router-for-codex/.codex/`, the router was cloned but not installed into the workspace root.
 
 If Codex asks whether to trust hooks, review and trust them only if you are comfortable with the local hook behavior.
 
