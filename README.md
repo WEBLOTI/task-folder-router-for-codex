@@ -89,14 +89,25 @@ projects/my-dashboard/
 
 ## Quick Start
 
-Clone this template once into a tools folder:
+Recommended: clone this template once into a tools folder, outside your Codex workspaces:
 
 ```bash
-git clone https://github.com/<owner>/task-folder-router-for-codex.git
+mkdir -p ~/CodexTools
+cd ~/CodexTools
+git clone https://github.com/WEBLOTI/task-folder-router-for-codex.git
 cd task-folder-router-for-codex
 ```
 
-Install it into any Codex workspace:
+If you use GitHub CLI, this is also supported:
+
+```bash
+mkdir -p ~/CodexTools
+cd ~/CodexTools
+gh repo clone WEBLOTI/task-folder-router-for-codex
+cd task-folder-router-for-codex
+```
+
+Install it into the real Codex workspace where tasks should run:
 
 ```bash
 python3 scripts/install.py --target "/path/to/my-codex-workspace"
@@ -109,6 +120,12 @@ Important: open the target workspace in Codex after installation. If you cloned 
 ```text
 .codex/hooks.json
 .codex/task-folder-router.json
+```
+
+You can check a workspace install without changing files:
+
+```bash
+python3 scripts/doctor.py --target "/path/to/my-codex-workspace"
 ```
 
 The installer asks which labels you want to allow, for example:
@@ -150,6 +167,19 @@ python3 scripts/install.py --target "/path/to/workspace-a"
 python3 scripts/install.py --target "/path/to/workspace-b"
 python3 scripts/install.py --target "/path/to/workspace-c"
 ```
+
+If you prefer to keep the cloned router inside a workspace, put it in a tools folder and still install into the workspace root:
+
+```bash
+cd "/path/to/my-codex-workspace"
+mkdir -p _tools
+cd _tools
+gh repo clone WEBLOTI/task-folder-router-for-codex
+cd task-folder-router-for-codex
+python3 scripts/install.py --target "../.."
+```
+
+After that, open `/path/to/my-codex-workspace` in Codex, not `_tools/task-folder-router-for-codex`.
 
 ## Documentation
 
