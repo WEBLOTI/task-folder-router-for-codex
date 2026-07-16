@@ -204,7 +204,9 @@ def main():
         print("Mode: required labels. New tasks without labels are blocked.")
     else:
         print("Mode: mixed. Unlabeled tasks work normally; labeled tasks use routed folders.")
-    print("Open this folder in Codex, trust hooks if prompted, and start a task with a configured label.")
+    print("Important: open the target folder above in Codex, not the cloned template folder, unless they are the same on purpose.")
+    print("The target folder should now contain .codex/hooks.json and .codex/task-folder-router.json.")
+    print("Trust hooks if prompted, then start a task with a configured label.")
     return 0
 
 
