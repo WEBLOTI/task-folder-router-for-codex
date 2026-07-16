@@ -12,8 +12,10 @@ This repository is a public template for adding safe task-folder routing to Code
 ## Router Behavior
 
 - Allowed labels are defined in `.codex/task-folder-router.json`.
-- A new Codex task must include one allowed label line, such as `project: my-app`.
-- The hook creates or reuses the configured folder, such as `projects/my-app/`.
+- In mixed mode, a new Codex task may omit a label and work normally in the workspace root.
+- To route a new Codex task into a subfolder, the first non-empty line must include one allowed label, such as `project: my-app`.
+- The hook creates or reuses the configured folder, such as `projects/my-app/`, when a label is used.
+- To continue the same subproject from a different new Codex task, reuse the same label and name.
 - Labels not present in the config must be rejected.
 - Folder names must be slugified and must never allow path traversal.
 
