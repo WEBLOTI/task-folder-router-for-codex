@@ -91,7 +91,14 @@ projects/my-dashboard/
 
 Want Codex to install it for you? Copy the prompt in [Copy-Paste Prompt For Codex](docs/copy-paste-prompt.md), paste it into Planning Mode, and let Codex ask which install flow you want.
 
-Recommended: clone this template once into a tools folder, outside your Codex workspaces:
+For the simplest setup:
+
+1. Open or create the folder where you want Codex to work.
+2. Open that folder in Codex.
+3. Paste the [Copy-Paste Prompt For Codex](docs/copy-paste-prompt.md) in Planning Mode.
+4. Let Codex ask which install flow and labels you want.
+
+If you prefer terminal commands, clone this template once into a tools folder, outside your Codex workspaces:
 
 ```bash
 mkdir -p ~/CodexTools
