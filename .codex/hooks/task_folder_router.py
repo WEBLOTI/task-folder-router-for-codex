@@ -12,6 +12,8 @@ CONFIG_PATH = ROOT / ".codex" / "task-folder-router.json"
 STATE_DIR = ROOT / ".codex" / "state" / "task-folder-router"
 DEFAULT_ROUTES = {
     "project": "projects",
+    "project-task": "projects",
+    "project-continue": "projects",
     "plugin": "plugins",
     "client": "clients",
     "site": "sites",
