@@ -17,6 +17,7 @@ DEFAULT_ROUTES = {
     "site": "sites",
     "app": "apps",
 }
+DEFAULT_REQUIRE_ROUTE_PREFIX = False
 
 
 class RouterError(Exception):
@@ -92,7 +93,10 @@ def load_config():
     if CONFIG_PATH.exists():
         config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     else:
-        config = {"routes": DEFAULT_ROUTES, "require_route_prefix": True}
+        config = {
+            "routes": DEFAULT_ROUTES,
+            "require_route_prefix": DEFAULT_REQUIRE_ROUTE_PREFIX,
+        }
 
     routes = config.get("routes")
     if not isinstance(routes, dict) or not routes:
@@ -108,7 +112,9 @@ def load_config():
 
     return {
         "routes": clean_routes,
-        "require_route_prefix": bool(config.get("require_route_prefix", True)),
+        "require_route_prefix": bool(
+            config.get("require_route_prefix", DEFAULT_REQUIRE_ROUTE_PREFIX)
+        ),
     }
 
 
@@ -119,13 +125,26 @@ def allowed_examples(routes):
     return ", ".join(examples)
 
 
+def first_non_empty_line(prompt):
+    for line in (prompt or "").splitlines():
+        if line.strip():
+            return line.strip()
+    return ""
+
+
 def extract_route(prompt, routes):
-    label_pattern = "|".join(re.escape(label) for label in sorted(routes, key=len, reverse=True))
-    pattern = re.compile(
-        rf"^\s*(?P<label>{label_pattern})\s*:\s*(?P<name>.+?)\s*$",
-        re.IGNORECASE | re.MULTILINE,
+    line = first_non_empty_line(prompt)
+    if not line:
+        return None
+
+    label_pattern = "|".join(
+        re.escape(label) for label in sorted(routes, key=len, reverse=True)
     )
-    match = pattern.search(prompt or "")
+    pattern = re.compile(
+        rf"^(?P<label>{label_pattern})\s*:\s*(?P<name>.+?)\s*$",
+        re.IGNORECASE,
+    )
+    match = pattern.match(line)
     if not match:
         return None
 
@@ -136,11 +155,15 @@ def extract_route(prompt, routes):
 
 
 def detect_unknown_label(prompt, routes):
-    pattern = re.compile(r"^\s*(?P<label>[A-Za-z][A-Za-z0-9_-]{0,31})\s*:\s*.+$", re.MULTILINE)
-    for match in pattern.finditer(prompt or ""):
-        label = match.group("label").strip().lower()
-        if label not in routes:
-            return label
+    line = first_non_empty_line(prompt)
+    pattern = re.compile(r"^(?P<label>[A-Za-z][A-Za-z0-9_-]{0,31})\s*:\s*.+$")
+    match = pattern.match(line)
+    if not match:
+        return None
+
+    label = match.group("label").strip().lower()
+    if label not in routes:
+        return label
     return None
 
 
@@ -181,9 +204,15 @@ def handle_session_start(event, config):
             "hookSpecificOutput": {
                 "hookEventName": "SessionStart",
                 "additionalContext": (
-                    "This workspace uses Task Folder Router. Start a new task with "
-                    f"one configured label, for example {allowed_examples(config['routes'])}. "
-                    "Codex should work inside the created or reused task folder."
+                    "This workspace uses Task Folder Router. "
+                    f"Configured labels include {allowed_examples(config['routes'])}. "
+                    + (
+                        "The first message of a new task must start with one configured label. "
+                        if config["require_route_prefix"]
+                        else "A task may start without a label to use the workspace normally, "
+                        "or start with a configured label to route work into a subfolder. "
+                    )
+                    + "When a label is used, Codex should work inside the created or reused task folder."
                 ),
             }
         }
@@ -201,7 +230,7 @@ def handle_user_prompt_submit(event, config):
     except json.JSONDecodeError:
         state = {"status": "pending", "session_id": session_id}
 
-    if state.get("status") == "processed":
+    if state.get("status") in ("processed", "bypassed"):
         return
 
     prompt = event.get("prompt", "")
@@ -209,16 +238,53 @@ def handle_user_prompt_submit(event, config):
     if not route:
         unknown_label = detect_unknown_label(prompt, config["routes"])
         if unknown_label:
-            reason = (
-                f"`{unknown_label}:` is not configured for this workspace. "
-                f"Use one of: {allowed_examples(config['routes'])}."
+            emit(
+                {
+                    "decision": "block",
+                    "reason": (
+                        f"`{unknown_label}:` is not configured for this workspace. "
+                        f"Use one of: {allowed_examples(config['routes'])}, "
+                        "or remove the first-line label to work normally in the workspace root."
+                    ),
+                }
             )
-        else:
-            reason = (
-                "This workspace requires a configured task-folder label on the first "
-                f"new-task message. Use one of: {allowed_examples(config['routes'])}."
+            return
+
+        if config["require_route_prefix"]:
+            emit(
+                {
+                    "decision": "block",
+                    "reason": (
+                        "This workspace requires a configured task-folder label on the first "
+                        f"new-task message. Use one of: {allowed_examples(config['routes'])}."
+                    ),
+                }
             )
-        emit({"decision": "block", "reason": reason})
+            return
+
+        state.update(
+            {
+                "status": "bypassed",
+                "mode": "workspace-root",
+                "processed_at": now_iso(),
+            }
+        )
+        path.write_text(
+            json.dumps(state, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        emit(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "UserPromptSubmit",
+                    "additionalContext": (
+                        "No configured task-folder label was provided for this task. "
+                        "Use the workspace root normally unless the user explicitly asks "
+                        "for a different location."
+                    ),
+                }
+            }
+        )
         return
 
     label, raw_name = route
