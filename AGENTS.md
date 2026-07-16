@@ -15,7 +15,8 @@ This repository is a public template for adding safe task-folder routing to Code
 - In mixed mode, a new Codex task may omit a label and work normally in the workspace root.
 - To route a new Codex task into a subfolder, the first non-empty line must include one allowed label, such as `project: my-app`.
 - The hook creates or reuses the configured folder, such as `projects/my-app/`, when a label is used.
-- To continue the same subproject from a different new Codex task, reuse the same label and name.
+- `project-task:` and `project-continue:` are aliases for `project:` by default and must reuse the same `projects/<slug>/` folder.
+- To continue the same subproject from a different new Codex task, reuse the same label and name or use the matching continuation alias.
 - Labels not present in the config must be rejected.
 - Folder names must be slugified and must never allow path traversal.
 
