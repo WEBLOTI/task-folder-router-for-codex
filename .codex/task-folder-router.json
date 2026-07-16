@@ -6,5 +6,5 @@
     "site": "sites",
     "app": "apps"
   },
-  "require_route_prefix": true
+  "require_route_prefix": false
 }
