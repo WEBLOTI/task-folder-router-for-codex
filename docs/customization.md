@@ -14,6 +14,8 @@ The config file lives in the installed workspace:
 {
   "routes": {
     "project": "projects",
+    "project-task": "projects",
+    "project-continue": "projects",
     "plugin": "plugins",
     "client": "clients",
     "site": "sites",
@@ -28,11 +30,13 @@ The config file lives in the installed workspace:
 The key is the label you type in Codex. The value is the folder root.
 
 ```text
-project: crm        -> projects/crm/
-plugin: checkout   -> plugins/checkout/
-client: acme inc   -> clients/acme-inc/
-site: landing page -> sites/landing-page/
-app: admin panel   -> apps/admin-panel/
+project: crm          -> projects/crm/
+project-task: crm     -> projects/crm/
+project-continue: crm -> projects/crm/
+plugin: checkout      -> plugins/checkout/
+client: acme inc      -> clients/acme-inc/
+site: landing page    -> sites/landing-page/
+app: admin panel      -> apps/admin-panel/
 ```
 
 The router only reads the first non-empty line of the first message in a new task.
@@ -62,6 +66,31 @@ The router creates:
 ```text
 experiments/pricing-test/
 ```
+
+## Add Alias Labels
+
+Multiple labels can point to the same folder root. This is useful when labels describe intent instead of storage.
+
+```json
+{
+  "routes": {
+    "project": "projects",
+    "project-task": "projects",
+    "project-continue": "projects"
+  },
+  "require_route_prefix": false
+}
+```
+
+These all reuse the same folder:
+
+```text
+project: crm          -> projects/crm/
+project-task: crm     -> projects/crm/
+project-continue: crm -> projects/crm/
+```
+
+They do not create `project-task/` or `project-continue/` folders unless you configure those as folder roots.
 
 ## Remove A Label
 
@@ -129,6 +158,20 @@ This reuses:
 
 ```text
 clients/acme-inc/
+```
+
+For project folders, you can also use the built-in continuation alias:
+
+```text
+project-continue: crm
+
+Continue the reports screen.
+```
+
+This reuses:
+
+```text
+projects/crm/
 ```
 
 ## Keep Labels Predefined
