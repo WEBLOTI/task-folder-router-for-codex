@@ -76,6 +76,47 @@ python3 scripts/install.py --target "/path/to/codex-workspace"
 
 Then open that target workspace in Codex.
 
+## My Folder Was Created Above The Label Folder
+
+This usually means the router was installed inside the cloned template folder instead of the real Codex workspace root.
+
+Example of the problem:
+
+```text
+my-workspace/
+  task-folder-router-for-codex/
+    .codex/
+    clients/budget-calculator/
+  job-search-prototype/
+```
+
+In that case, install the router into `my-workspace/` itself:
+
+```bash
+python3 /path/to/task-folder-router-for-codex/scripts/install.py --target "/path/to/my-workspace"
+```
+
+Then open `/path/to/my-workspace` in Codex. The workspace root should contain:
+
+```text
+my-workspace/
+  .codex/hooks.json
+  .codex/task-folder-router.json
+  clients/
+```
+
+After that, a task starting with:
+
+```text
+client: Jobs App
+```
+
+will route to:
+
+```text
+clients/jobs-app/
+```
+
 ## I Want To Use It In Multiple Workspaces
 
 Keep one clone of the template and run the installer for each workspace:
